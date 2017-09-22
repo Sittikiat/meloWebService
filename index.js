@@ -32,20 +32,20 @@ app.get("/user", (req, res) => {
 
 app.post("/newuser", (req, res) => {
     console.log(req.body)
-    // let username = req.body.username;
-    // let password = req.body.password;
-    // let email = req.body.email;
-    // let image = req.body.image;
+    let username = req.body.username;
+    let password = req.body.password;
+    let email = req.body.email;
+    let image = req.body.image;
 
-    // let sql = `INSERT INTO user(username_user, password_user, email_user, image_user) VALUES ('${username}', '${password}', '${email}', '${image}')`;
-    // con.query(sql, (err, result) => {
-    //     if (err) throw err;
-    //     if (result) {
-    //         res.json({"status": "success", "message": "welcome new user"});
-    //     } else {
-    //         res.json({"status": "fail", "message": "Opps try again"});
-    //     }
-    // }); 
+    let sql = `INSERT INTO user(username_user, password_user, email_user, image_user) VALUES ('${username}', '${password}', '${email}', '${image}')`;
+    con.query(sql, (err, result) => {
+        if (err) throw err;
+        if (result) {
+            res.json({"status": "success", "message": "welcome new user"});
+        } else {
+            res.json({"status": "fail", "message": "Opps try again"});
+        }
+    }); 
 });
 
 app.put("/edituser", (req, res) => {
