@@ -1,6 +1,7 @@
 let con = require("./module/connect");
 let express = require("express")
 let bodyParser = require("body-parser");
+let multer = require("multer");
 let app = express();
 
 // allow post
@@ -14,10 +15,12 @@ app.use(function(req, res, next) {
     next();
 });
 
-
 app.get("/", (req, res) => {
     res.end("Web Service");
 });
+
+//------------------------------------------------USER------------------------------------------------//
+
 
 app.get("/user", (req, res) => {
     let sql = "SELECT * FROM user";
@@ -28,19 +31,21 @@ app.get("/user", (req, res) => {
 });
 
 app.post("/newuser", (req, res) => {
-    let username = req.body.username;
-    let password = req.body.password;
-    let email = req.body.email;
+    console.log(req.body)
+    // let username = req.body.username;
+    // let password = req.body.password;
+    // let email = req.body.email;
+    // let image = req.body.image;
 
-    let sql = `INSERT INTO user(username_user, password_user, email_user) VALUES ('${username}', '${password}', '${email}')`;
-    con.query(sql, (err, result) => {
-        if (err) throw err;
-        if (result) {
-            res.json({"status": "success", "message": "welcome new user"});
-        } else {
-            res.json({"status": "fail", "message": "Opps try again"});
-        }
-    }); 
+    // let sql = `INSERT INTO user(username_user, password_user, email_user, image_user) VALUES ('${username}', '${password}', '${email}', '${image}')`;
+    // con.query(sql, (err, result) => {
+    //     if (err) throw err;
+    //     if (result) {
+    //         res.json({"status": "success", "message": "welcome new user"});
+    //     } else {
+    //         res.json({"status": "fail", "message": "Opps try again"});
+    //     }
+    // }); 
 });
 
 app.put("/edituser", (req, res) => {
@@ -59,6 +64,22 @@ app.put("/edituser", (req, res) => {
         }
     });
 });
+
+app.delete("/deluser/:id", (req, res) => {
+    let id = req.params.id;
+
+    let sql = `DELETE FROM user WHERE id_user = '${id}'`;
+    con.query(sql, (err, result) => {
+        if (err) throw err;
+        if (result) {
+            res.json({"status": "success", "message": "Delete user ok"});
+        } else {
+            res.json({"status": "fail", "message": "Opps try again"});
+        }
+    });
+});
+
+//---------------------------------------------RESTAURANT----------------------------------------------//
 
 
 
