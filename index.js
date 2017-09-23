@@ -36,16 +36,19 @@ app.post("/newuser", (req, res) => {
     let password = req.body.password;
     let email = req.body.email;
 
-    // ---------------image--------------------
+    // ---------------image-------------------- 
     let imageFilenameOrignal = req.body.image.filename;
     let imageData = req.body.image.base64;
-    let imageFilenameMaster = renameFile(imageFilenameOrignal);
+    let imageFilenameMaster = "http://sittikiat.streetfood.in.th/web/meloWebService/images/" + renameFile(imageFilenameOrignal);
+
 
     function renameFile(image) {
         let extension = image.split(".").pop();
         let newFilename = Date.now() + "." + extension;
         return  newFilename;
     }
+
+    console.log(imageFilenameMaster)
 
     fs.mkdir("./images", () => {
         fs.writeFileSync("./images/" + imageFilenameMaster, imageData, "base64");
