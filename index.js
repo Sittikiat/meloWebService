@@ -48,7 +48,6 @@ app.post("/newuser", (req, res) => {
         return  newFilename;
     }
 
-
     fs.mkdir("./images", () => {
         fs.writeFileSync("./images/" + imageFilenameMaster, imageData, "base64");
         console.log("image upload success");
