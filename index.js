@@ -39,7 +39,7 @@ app.post("/newuser", (req, res) => {
     // ---------------image-------------------- 
     let imageFilenameOrignal = req.body.image.filename;
     let imageData = req.body.image.base64;
-    let imageFilenameMaster = "http://sittikiat.streetfood.in.th/web/meloWebService/images/" + renameFile(imageFilenameOrignal);
+    let imageFilenameMaster = renameFile(imageFilenameOrignal);
 
 
     function renameFile(image) {
@@ -48,7 +48,6 @@ app.post("/newuser", (req, res) => {
         return  newFilename;
     }
 
-    console.log(imageFilenameMaster)
 
     fs.mkdir("./images", () => {
         fs.writeFileSync("./images/" + imageFilenameMaster, imageData, "base64");
@@ -103,6 +102,6 @@ app.delete("/deluser/:id", (req, res) => {
 
 
 
-app.listen(3000, () => {
-    console.log("Server running at http://localhost:3000");
+app.listen(3333, () => {
+    console.log("Server running at http://localhost:3333");
 });
