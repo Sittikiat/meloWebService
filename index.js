@@ -59,7 +59,6 @@ app.post("/newuser", (req, res) => {
     con.query(sql, (err, result) => {
         if (err) throw err;
         if (result) {
-            console.log(res.json(result));
             res.json({"status": "success", "message": "welcome new user"});
         } else {
             res.json({"status": "fail", "message": "Opps try again"});
@@ -102,6 +101,6 @@ app.delete("/deluser/:id", (req, res) => {
 
 
 
-app.listen(3333, () => {
-    console.log("Server running at http://localhost:3333");
+app.listen(3000, () => {
+    console.log("Server running at http://localhost:3000");
 });
