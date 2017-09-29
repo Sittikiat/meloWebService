@@ -4,11 +4,11 @@ let bodyParser = require("body-parser");
 let fs = require("fs");
 let app = express();
 
-// allow post
-app.use(bodyParser.json());
+// allow post and limit size
+app.use(bodyParser.json({ limit: "50mb" }));
 
 // Access-Control-Allow-Origin
-app.use(function(req, res, next) {
+app.use(function (req, res, next) {
     res.header("Access-Control-Allow-Origin", "*");
     res.header("Access-Control-Allow-Methods", "GET,PUT,POST,PATCH,DELETE");
     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
@@ -20,6 +20,12 @@ app.get("/", (req, res) => {
 });
 
 //------------------------------------------------USER------------------------------------------------//
+
+function renameFile(image) {
+    let extension = image.split(".").pop();
+    let newFilename = Date.now() + "." + extension;
+    return newFilename;
+}
 
 
 app.get("/user", (req, res) => {
@@ -42,11 +48,7 @@ app.post("/newuser", (req, res) => {
     let imageFilenameMaster = renameFile(imageFilenameOrignal);
 
 
-    function renameFile(image) {
-        let extension = image.split(".").pop();
-        let newFilename = Date.now() + "." + extension;
-        return  newFilename;
-    }
+
 
     fs.mkdir("./images", () => {
         fs.writeFileSync("./images/" + imageFilenameMaster, imageData, "base64");
@@ -58,11 +60,11 @@ app.post("/newuser", (req, res) => {
     con.query(sql, (err, result) => {
         if (err) throw err;
         if (result) {
-            res.json({"status": "success", "message": "welcome new user"});
+            res.json({ "status": "success", "message": "welcome new user" });
         } else {
-            res.json({"status": "fail", "message": "Opps try again"});
+            res.json({ "status": "fail", "message": "Opps try again" });
         }
-    }); 
+    });
 });
 
 app.put("/edituser", (req, res) => {
@@ -75,9 +77,9 @@ app.put("/edituser", (req, res) => {
     con.query(sql, (err, result) => {
         if (err) throw err;
         if (result) {
-            res.json({"status": "success", "message": "Edit user ok"});
+            res.json({ "status": "success", "message": "Edit user ok" });
         } else {
-            res.json({"status": "fail", "message": "Opps try again"});
+            res.json({ "status": "fail", "message": "Opps try again" });
         }
     });
 });
@@ -89,15 +91,112 @@ app.delete("/deluser/:id", (req, res) => {
     con.query(sql, (err, result) => {
         if (err) throw err;
         if (result) {
-            res.json({"status": "success", "message": "Delete user ok"});
+            res.json({ "status": "success", "message": "Delete user ok" });
         } else {
-            res.json({"status": "fail", "message": "Opps try again"});
+            res.json({ "status": "fail", "message": "Opps try again" });
         }
     });
 });
 
 //---------------------------------------------RESTAURANT----------------------------------------------//
 
+app.get("/restaurant", (req, res) => {
+    let sql = "SELECT * FROM restaurant";
+    con.query(sql, (err, result) => {
+        if (err) throw err;
+        res.json(result);
+    })
+});
+
+app.delete("/delrestaurant/:id", (req, res) => {
+    let id = req.params.id;
+
+    let sql = `DELETE FROM restaurant WHERE id_restaurant = '${id}'`;
+    con.query(sql, (err, result) => {
+        if (err) throw err;
+        if (result) {
+            res.json({ "status": "success", "message": "Delete restaurant ok" });
+        } else {
+            res.json({ "status": "fail", "message": "Opps try again" });
+        }
+    });
+});
+
+app.post("/newrestaurant", (req, res) => {
+    let name = req.body.name;
+    let comment = req.body.comment;
+    let rate = req.body.rate;
+    let address = req.body.address;
+    let image = req.body.image;
+    let category = req.body.category;
+    let menu = req.body.menu;
+
+    // ---------------image--------------------
+    let imageName = renameFile(image.filename);
+    fs.mkdir("./images", () => {
+        fs.writeFileSync("./images/" + imageName, image.base64, "base64");
+        console.log("insert image success");
+    })
+    // ---------------------------------------- 
+    let sql = `INSERT INTO restaurant (name_restaurant, comment_restaurant, rate_restaurant, address_restaurant, img_restaurant, id_restaurant_category, id_menu) 
+               VALUES ('${name}', '${comment}', '${rate}', '${address}', '${imageName}', '${category}', '${menu}')`;
+    con.query(sql, (err, result) => {
+        if (err) throw err;
+        if (result) {
+            res.json({ "status": "success", "message": "Insert image success" });
+        } else {
+            res.json({ "status": "fail", "message": "Opps try again" });
+
+        }
+    })
+})
+
+
+//--------------------------------------RESTAURANT CATEGORY--------------------------------------------//
+
+app.get("/restaurant_category", (req, res) => {
+    let sql = "SELECT * FROM restaurant_category";
+    con.query(sql, (err, result) => {
+        if (err) throw err;
+        res.json(result);
+    })
+});
+
+//---------------------------------------------MENU----------------------------------------------//
+
+app.get("/menu", (req, res) => {
+    let sql = "SELECT * FROM menu";
+    con.query(sql, (err, result) => {
+        if (err) throw err;
+        res.json(result);
+    })
+});
+
+//------------------------------------------RESRAURANT IMAGE----------------------------------------//
+
+app.post("/newrestaurant_image", (req, res) => {
+    let image = req.body.image;
+    let nameRestaurant = req.body.nameRestaurant;
+
+    // ---------------image--------------------
+    let nameImage = renameFile(image.filename);
+    fs.mkdir("./images", () => {
+        fs.writeFileSync("./images/" + nameImage, image.base64, "base64");
+        console.log("insert image success");
+    })
+
+    // ---------------------------------------- 
+
+    let sql = `INSERT INTO restaurant_image (name_restaurant_image, id_restaurant) VALUES ('${nameImage}', '${nameRestaurant}')`;
+    con.query(sql, (err, result) => {
+        if (err) throw err;
+        if (result) {
+            res.json({"status": "success", "message": "Insert Muliple Image Success"});
+        } else {
+            res.json({"status": "fail", "message": "Opps try again"});
+        }
+    })
+});
 
 
 app.listen(3000, () => {
